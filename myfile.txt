@@ -1,0 +1,9 @@
+BE French
+FR French
+DE German
+IT Italian
+BE Flemish
+NL Dutch
+UK English
+IE English
+IE Irish
