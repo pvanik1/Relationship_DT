@@ -8,7 +8,7 @@ public class RelationClass<k,v> implements Relation {
 	
 	/** Arbitrary number co-determining the number of buckets. Seeks to achieve a compromise
 	 *  of hash table collision and occupancy. Based on a common hash table load factor of 0.5-0.75.*/
-	private final double BUCKET_MULTIPLIER = 1.50;
+	private final double BUCKET_MULTIPLIER = 1.5;
 	
 	/** Relation class implemented as a has table.*/
 	@SuppressWarnings("unchecked")
@@ -47,21 +47,28 @@ public class RelationClass<k,v> implements Relation {
 			if (key.equals(curr.getKey())) {
 				//System.out.println("key is " + key + " current key is " + curr.getKey());
 				if (val.equals(curr.getValue())) {
-					//System.err.println("Pair already exists.");
 					//System.out.println("current getvalue " + curr.getValue() + " and the value is " + val );
+					System.err.println("Pair " + key + " " + val + " already exists");
 					return;
 				}
-				else { if (curr.getNext() == null)
-					curr.setNext(key, val);
+				else { 
+					if (curr.getNext() == null)
+						curr.setNext(key, val);
 				}
+			}
+			// !!! Here it should be appended! German has different key but should be added if they have the same hash (OR?)
+			else { 
+				if (curr.getNext() == null)
+					curr.setNext(key, val);
 			}
 			curr = curr.getNext();
 		}
 		buckets[b] = new Node<k,v>(key, val, null);
+		System.out.println(buckets[b].printBucket());
 	}
 	
-	
-	
+	// !!! Problem is bucket size, if large enough (80), hashing works properly.
+	// TODO go with printing statements at insertions to see why it's taking the values twice and trying to insert them twice - cause I presume that's what it's doing
 	
 	/* default insert for HT
 	 * 

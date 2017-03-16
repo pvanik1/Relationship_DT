@@ -60,6 +60,7 @@ public class Parser {
 					key = inLine.next();
 					value = inLine.next();
 					relation.insert(key, value);
+					//System.err.println("Tried adding " + key + " " + value);
 				}
 				inLine.close();
 			}
