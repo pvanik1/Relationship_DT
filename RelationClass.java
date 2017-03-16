@@ -42,16 +42,22 @@ public class RelationClass<k,v> implements Relation {
 	public void insert (k key, v val) {
 		int b = hash(key);
 		Node<k,v> curr = buckets[b];
-		while (curr != null) {
-			if (key.equals(curr.key)) {
-				if (curr.value == val)
+		
+		while (curr != null) {	
+			if (key.equals(curr.getKey())) {
+				//System.out.println("key is " + key + " current key is " + curr.getKey());
+				if (val.equals(curr.getValue())) {
+					//System.err.println("Pair already exists.");
+					//System.out.println("current getvalue " + curr.getValue() + " and the value is " + val );
 					return;
-				else 
-					buckets[b].setNext(key, val);
+				}
+				else { if (curr.getNext() == null)
+					curr.setNext(key, val);
+				}
 			}
-			curr = curr.next;
+			curr = curr.getNext();
 		}
-		buckets[b] = new Node<k,v>(key, val, buckets[b]);
+		buckets[b] = new Node<k,v>(key, val, null);
 	}
 	
 	
@@ -90,8 +96,16 @@ public class RelationClass<k,v> implements Relation {
 			this.next = next;
 		}
 		
-		private Node<k,v> getNext() {
+		public Node<k,v> getNext() {
 			return next;
+		}
+		
+		public k getKey() {
+			return key;
+		}
+		
+		public v getValue() {
+			return value;
 		}
 		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
