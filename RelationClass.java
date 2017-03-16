@@ -27,11 +27,9 @@ public class RelationClass<k,v> implements Relation {
 	}
 	
 	
-	
 	@Override
 	public String toString() {
 		String result = "";
-		String lineResult = "";
 		for (int i = 0; i < buckets.length; i++) {
 			if (buckets[i] != null) {
 				result += "[" + i + "]" + " ";
@@ -54,7 +52,6 @@ public class RelationClass<k,v> implements Relation {
 			curr = curr.next;
 		}
 		buckets[b] = new Node<k,v>(key, val, buckets[b]);
-		System.out.println("inserted");
 	}
 	
 	
@@ -97,6 +94,7 @@ public class RelationClass<k,v> implements Relation {
 			return next;
 		}
 		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private void setNext(k key, v value) {
 			next = new Node (key, value, null);
 		}

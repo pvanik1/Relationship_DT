@@ -20,7 +20,6 @@ public class Parser {
 		while (inFile.hasNextLine()) {
 			lines++;
 			inFile.nextLine();
-			System.out.println("This is the number of lines:" + lines);
 		}
 		
 		r.close();
