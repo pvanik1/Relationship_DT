@@ -67,23 +67,101 @@ public class RelationClass<k,v> implements Relation {
 		buckets[b] = new Node<k,v>(key, val, null);
 	}
 	
-	// !!! Problem is bucket size, if large enough (80), hashing works properly.
-	// TODO go with printing statements at insertions to see why it's taking the values twice and trying to insert them twice - cause I presume that's what it's doing
 	
-	/* default insert for HT
-	 * 
-	public void insert (k key, v val) {
+	public boolean contains(Node node) {
+		k key = (k) node.getKey();
+		v value = (v) node.getValue();
 		int b = hash(key);
 		Node<k,v> curr = buckets[b];
+		
 		while (curr != null) {
-			if (key.equals(curr.key)) {
-				curr.value = val;
-				return;
-			}
-			curr = curr.next;
+			if (key.equals(curr.getKey()))	// check if keys are the same
+				if (value.equals(curr.getValue()))
+					return true;
+			curr = curr.getNext();
 		}
-		buckets[b] = new Node<k,v>(key, val, buckets[b]);
-	} */
+		return false;
+	}
+	
+	// overloaded contains() method so that simple string input can be tested
+	public boolean contains(String keyString, String valueString) {
+		k key = (k) keyString;
+		v value = (v) valueString;
+		int b = hash(key);
+		Node<k,v> curr = buckets[b];
+		
+		while (curr != null) {
+			if (key.equals(curr.getKey()))	// check if keys are the same
+				if (value.equals(curr.getValue()))
+					return true;
+			curr = curr.getNext();
+		}
+		return false;
+	}
+	
+	public Set<v> getValues(k key) {
+		int b = hash(key);
+		Node<k,v> curr = buckets[b];
+		Set<v> resultSet = new HashSet<v>();
+		
+		while (curr != null) {
+			if (curr.getKey().equals(key))
+				resultSet.add(curr.getValue());			
+			curr = curr.getNext();
+		}
+		return resultSet;
+	}
+	
+	// overloaded getValues method for testing string inputs
+	
+	public Set<v> getValues(String keyString) {
+		k key = (k) keyString;
+		int b = hash(key);
+		Node<k,v> curr = buckets[b];
+		Set<v> resultSet = new HashSet<v>();
+		
+		while (curr != null) {
+			if (curr.getKey().equals(key))
+				resultSet.add(curr.getValue());			
+			curr = curr.getNext();
+		}
+		return resultSet;
+	}
+	
+	// 3. given y, return a set containing all values x such that the relation
+		// contains (x, y)
+	
+	public Set<v> getKeys(v value) {
+		Set<v> resultSet = new HashSet<v>();
+		for (int i = 0; i < buckets.length; i++) {
+			Node<k,v> curr = buckets[i];
+			while (curr != null) {
+				if (curr.getValue().equals(value))
+					resultSet.add((v) curr.getKey());
+				curr = curr.getNext();
+			}
+		}
+		return resultSet;
+	}
+	
+	// overloaded getKeys() method
+	
+	public Set<v> getKeys(String valuestring) {
+		v value = (v) valuestring;
+		Set<v> resultSet = new HashSet<v>();
+		for (int i = 0; i < buckets.length; i++) {
+			Node<k,v> curr = buckets[i];
+			while (curr != null) {
+				if (curr.getValue().equals(value))
+					resultSet.add((v) curr.getKey());
+				curr = curr.getNext();
+			}
+		}
+		return resultSet;
+	}
+	
+	
+	// --- Node code ---
 	
 	/**
 	 * Inner node class for nodes of the hash table
@@ -95,7 +173,7 @@ public class RelationClass<k,v> implements Relation {
 	private static class Node<k,v> {
 		private k key;
 		private v value;
-		private Node<k,v> next;
+		private Node<k,v> next;	
 		
 		private Node(k nodekey, v nodevalue, Node<k,v> next) {
 			this.key = nodekey;
@@ -133,6 +211,10 @@ public class RelationClass<k,v> implements Relation {
 			return result;
 		}
 	}
+
+	
+
+	
 	
 }
 
