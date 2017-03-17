@@ -16,5 +16,12 @@ public interface Relation<Node, k, v> {
 	// contains (x, y)
 	// public getKeys(v value);
 	
+	//4. make the relation empty
+	// public clear()
 	
+	//5. add a given pair (x, y) to the relation
+	// insert (k key, v val)
+	
+	//6. remove a given pair (x, y) from the relation
+	// remove (k key, v val)
 }

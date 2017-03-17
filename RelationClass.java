@@ -36,6 +36,8 @@ public class RelationClass<k,v> implements Relation {
 				result += buckets[i].printBucket() + "\n";
 			}
 		}
+		if (result == "")
+			return "Relation is empty";
 		return result;
 	}
 	
@@ -160,6 +162,87 @@ public class RelationClass<k,v> implements Relation {
 		return resultSet;
 	}
 	
+	public void clear() {
+		for (int i = 0; i < buckets.length; i++) {
+			buckets[i] = null;
+		}
+	}
+	
+	public void remove (k key, v val) {
+		int b = hash(key);
+		Node<k,v> curr = buckets[b];
+		Node<k,v> previous = null;
+		
+		while (curr != null) {
+			
+			if (curr.getKey().equals(key))
+				if (curr.getValue().equals(val))
+					if (curr.getNext() != null) {
+						previous.setNext(curr.getNext());
+						previous = curr;
+						curr = curr.getNext();
+					} else {
+						curr = null;
+					}
+		}
+	}
+	
+	
+	// overloaded remove method
+	
+	public void remove (String keystring, String valuestring) {
+		
+		k key = (k) keystring;
+		v val = (v) valuestring;
+		
+		int b = hash(key);
+		Node<k,v> curr = buckets[b];
+		Node<k,v> previous = null;
+		
+		while (curr != null) {
+			
+			if (curr.getKey().equals(key)) {
+				if (curr.getValue().equals(val)) {							
+
+					if (previous != null) {
+						previous.setNext(curr.getNext());
+					} else {
+						buckets[b] = curr.getNext();
+						curr = null;
+					}
+				}
+			}	
+			curr = curr.getNext();	
+		}
+	}
+		
+		
+//		while (curr != null) {
+//			
+//			if (curr.getKey().equals(key))
+//				if (curr.getValue().equals(val))
+//					
+//					if (previous == null) {
+//						
+//						if (curr.getNext() == null) {
+//							buckets[b] = null; // should only execute if there is no next
+//							curr = null;
+//							
+//						} else {
+//							buckets[b] = curr.getNext();
+//							curr = null;
+//						}
+//						
+//					} else {	
+//						previous.setNext(curr.getNext());
+//						curr = null;
+//					}
+//			
+//			previous = curr;
+//			curr = curr.getNext();
+//			System.err.println("abraka");
+//		}
+//	}
 	
 	// --- Node code ---
 	
@@ -182,7 +265,9 @@ public class RelationClass<k,v> implements Relation {
 		}
 		
 		public Node<k,v> getNext() {
-			return next;
+			if (next != null)
+				return next;
+			else return null;
 		}
 		
 		public k getKey() {
@@ -196,6 +281,11 @@ public class RelationClass<k,v> implements Relation {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private void setNext(k key, v value) {
 			next = new Node (key, value, null);
+		}
+		
+		// Overloading method to set nodes next for different parameter
+		private void setNext(Node n) {
+			next = n;
 		}
 		
 		@Override
