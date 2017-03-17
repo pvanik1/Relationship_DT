@@ -45,26 +45,26 @@ public class RelationClass<k,v> implements Relation {
 		
 		while (curr != null) {	
 			if (key.equals(curr.getKey())) {
-				//System.out.println("key is " + key + " current key is " + curr.getKey());
+
 				if (val.equals(curr.getValue())) {
-					//System.out.println("current getvalue " + curr.getValue() + " and the value is " + val );
 					System.err.println("Pair " + key + " " + val + " already exists");
 					return;
 				}
-				else { 
-					if (curr.getNext() == null)
+				else if (curr.getNext() == null) {
 						curr.setNext(key, val);
+						return;
 				}
 			}
-			// !!! Here it should be appended! German has different key but should be added if they have the same hash (OR?)
+
 			else { 
-				if (curr.getNext() == null)
-					curr.setNext(key, val);
+				if (curr.getNext() == null) {
+						curr.setNext(key, val);
+						break; 
+				}	
 			}
 			curr = curr.getNext();
 		}
 		buckets[b] = new Node<k,v>(key, val, null);
-		System.out.println(buckets[b].printBucket());
 	}
 	
 	// !!! Problem is bucket size, if large enough (80), hashing works properly.
