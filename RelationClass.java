@@ -1,16 +1,31 @@
 import java.io.*;
 import java.util.*;
 
-public class RelationClass<k,v> implements Relation {
+/** Binary Relation ADT of homogenous types k, v implemented as a Hash Table. 
+ *
+ * @author 1103086v
+ *
+ * @param <k>
+ * @param <v>
+ */
+public class RelationClass<k,v> implements Relation <k,v> {
 
 	private Node<k,v>[] buckets;
+	
+	/** Testing file containing country symbol and language pairs separated by new lines, 
+	 *  e.g. FR French
+	 */
 	private final String FILE_NAME = "myfile.txt";
 	
-	/** Arbitrary number co-determining the number of buckets. Seeks to achieve a compromise
-	 *  of hash table collision and occupancy. Based on a common hash table load factor of 0.5-0.75.*/
+	/** Arbitrary number for determining the number of buckets. Seeks to achieve a compromise
+	 *  of hash table occupancy and collission occurences. Based on a common hash table load factor of 0.5-0.75.*/
 	private final double BUCKET_MULTIPLIER = 1.5;
 	
-	/** Relation class implemented as a has table.*/
+	/** Hash Table constructor. Utilises Parser object to process input from testing file.
+	 *  Creates an array of Node<k,v> objects which contain references to the next node in the array index (bucket)
+	 *  as in a singly linked list ("SLL"). Array length is based on the number of entries in the 
+	 *  testing file and the BUCKET_MULTIPLIER. Populates the hash table from the testing file.
+	 */
 	@SuppressWarnings("unchecked")
 	public RelationClass() {
 		
@@ -21,26 +36,15 @@ public class RelationClass<k,v> implements Relation {
 		pars.process(this);
 	}
 	
-	// Hash function returns an array index smaller than bucketlength for each key
+	/** Hash function that returns a bucket index smaller than bucketlength */
 	private int hash (k key) {
 		return Math.abs(key.hashCode())	% buckets.length;
 	}
 	
-	
-	@Override
-	public String toString() {
-		String result = "";
-		for (int i = 0; i < buckets.length; i++) {
-			if (buckets[i] != null) {
-				result += "[" + i + "]" + " ";
-				result += buckets[i].printBucket() + "\n";
-			}
-		}
-		if (result == "")
-			return "Relation is empty";
-		return result;
-	}
-	
+	/*
+	 * Hash table insertion algorithm. If a pair already exists on the hashed index,
+	 * appends it to the last element as in a SLL.
+	 */
 	public void insert (k key, v val) {
 		int b = hash(key);
 		Node<k,v> curr = buckets[b];
@@ -48,22 +52,22 @@ public class RelationClass<k,v> implements Relation {
 		while (curr != null) {	
 			if (key.equals(curr.getKey())) {
 
-				if (val.equals(curr.getValue())) {
+				if (val.equals(curr.getValue())) {		// if both key and value already exist, terminate
 					System.err.println("Pair " + key + " " + val + " already exists");
 					return;
 				}
-				else if (curr.getNext() == null) {
+				else if (curr.getNext() == null) {		// if reached last element, append the new node to the end
 						curr.setNext(key, val);
 						return;
 				}
 			}
-			else if  (curr.getNext() == null) {
+			else if  (curr.getNext() == null) {			// 
 						curr.setNext(key, val);
 						return; 
 			}
-			curr = curr.getNext();
+			curr = curr.getNext();	// propagate on the SLL until both key and value matched or end of SLL is found
 		}
-		buckets[b] = new Node<k,v>(key, val, null);
+		buckets[b] = new Node<k,v>(key, val, null);		// if there are no nodes at the hashed index, place the new node there
 	}
 	
 	
@@ -201,6 +205,24 @@ public class RelationClass<k,v> implements Relation {
 		}
 	}
 	
+	/*
+	 * Returns a string representation of all occupied buckets in the format 
+	 * [occupied bucket index] <k, v> <k, v> <k,v> ...
+	 *  ... 
+	 */
+	@Override
+	public String toString() {
+		String result = "";
+		for (int i = 0; i < buckets.length; i++) {
+			if (buckets[i] != null) {
+				result += "[" + i + "]" + " ";
+				result += buckets[i].printBucket() + "\n";
+			}
+		}
+		if (result == "")
+			return "Relation is empty";
+		return result;
+	}
 	
 	// --- Node code ---
 	
@@ -211,7 +233,7 @@ public class RelationClass<k,v> implements Relation {
 	 * @param <k> key
 	 * @param <v> value
 	 */
-	private static class Node<k,v> {
+	public static class Node<k,v> {
 		private k key;
 		private v value;
 		private Node<k,v> next;	
@@ -234,28 +256,38 @@ public class RelationClass<k,v> implements Relation {
 			return value;
 		}
 		
+		// Overloaded setNext method to enable the use and testing of different parameter types
+		/** Sets the next attribute of a node to a new node with the provided key and value. 
+		 * 
+		 * @param key
+		 * @param value
+		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private void setNext(k key, v value) {
 			next = new Node (key, value, null);
 		}
 		
-		// Overloading method to set nodes next for different parameter
+		/** Sets the next attribute of a node to the node n specified in the parameter.
+		 * 
+		 * @param n
+		 */
 		private void setNext(Node n) {
 			next = n;
 		}
 		
+		/** Returns a string representation of a Node<k,v> in the format "<k,v>".*/
 		@Override
 		public String toString() {
 			return "<"+key.toString()+","+value.toString()+">";
 		}
 		
-		/** Prints SLL starting with a node */
+		/** Returns a string representation of a SLL starting with a Node<k,v> in the format "<k,v> <k,v> ..." */
 		public String printBucket() {
 			String result = this.toString() + " ";
 			if (this.getNext() != null)
 				result += this.getNext().printBucket();
 			return result;
 		}
-	}	
+	}
 }
 
