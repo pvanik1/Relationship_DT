@@ -23,4 +23,8 @@ public interface Relation<Node, k, v> {
 	// remove (k key, v val)
 	
 	// 7. given x, remove all pairs (x, y) from the relation
+	
+	// 8. given y, remove all pairs (x, y) from the relation
+	
+	// 9. render the relation’s contents as a string, in a suitable format.
 }

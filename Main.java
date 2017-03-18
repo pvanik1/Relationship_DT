@@ -6,11 +6,6 @@ public class Main {
 		RelationClass rel = new RelationClass();
 		rel.insert("NL", "Norse");
 		
-		
-		System.out.println(rel);
-		
-		rel.removeAllWithKey("UK");
-		
 		System.out.println(rel);
 	}
 

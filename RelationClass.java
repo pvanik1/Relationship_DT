@@ -103,8 +103,7 @@ public class RelationClass<k,v> implements Relation {
 		return resultSet;
 	}
 		
-	// 3. given y, return a set containing all values x such that the relation
-		// contains (x, y)
+	// 3. given y, return a set containing all values x such that the relation contains (x, y)
 	
 	public Set<v> getKeys(v value) {
 		Set<v> resultSet = new HashSet<v>();
@@ -133,38 +132,25 @@ public class RelationClass<k,v> implements Relation {
 		
 		while (curr != null) {
 			
-			// if match was found
-			if (curr.getKey().equals(key) && curr.getValue().equals(val)) {
-									
-				// if it's the first one and doesn't have next, then change buckets to null
-				if (previous == null && curr.getNext() == null) {
-					buckets[b] = null;
-					System.err.println(key + " " + val + " is the first one and doesn't have next");
+			
+			if (curr.getKey().equals(key) && curr.getValue().equals(val)) { // if pairs match
+												
+				if (previous == null) {		// if it's the first one , make the following SLL entry first in the bucket
+						buckets[b] = curr.getNext();
+						return;
+				}	
+				
+				else {						// if it's not the first one then make previous's next point to curr's next
+					previous.setNext(curr.getNext()); 
 					return;
 				}
 				
-				// if it's the first one and has a next, make second one the first one
-				else if (previous == null && curr.getNext() != null) {
-					buckets[b] = curr.getNext();
-					System.err.println(key + " " + val + " is the first one and has a next");
-					return;
-				}
-				
-				// if it's like a next one then make previous's next point to curr's next
-				else {
-					previous.setNext(curr.getNext());
-					System.err.println(key + " " + val + " is somewhere in SLL");
-					return;
-				}
-				
-			// there is not match, keep going through the SLL
-			} else {
+			} else {						// there is not match, keep going through the SLL
 				previous = curr;
 				curr = curr.getNext();
-				System.out.println("Running the cycle code because match wasn't found");
 			}
 		}
-		System.err.println("Match not found");
+		System.out.println("Pair not found");
 	}
 		
 	// 7. given x, remove all pairs (x, y) from the relation
@@ -175,7 +161,7 @@ public class RelationClass<k,v> implements Relation {
 		Node<k,v> previous = null;
 		
 		while (curr != null) {
-			if (key.equals(curr.getKey())) { // check if keys are the same
+			if (key.equals(curr.getKey())) { // check if keys match
 			
 				if (previous == null) {
 					buckets[b] = curr.getNext(); // if removing first item, set the next as first
@@ -187,10 +173,34 @@ public class RelationClass<k,v> implements Relation {
 			} else {
 				previous = curr; // if match wasn't found, set previous to current before moving on
 			}
-			
 			curr = curr.getNext(); // move in SLL
 		}
-	}		
+	}	
+	
+	
+	// 8. given y, remove all pairs (x, y) from the relation
+	public void removeAllWithValue(v val) {
+		for (int i = 0; i < buckets.length; i++) {
+			Node<k,v> curr = buckets[i];
+			Node<k,v> previous = null;
+			
+			while (curr != null) {
+				if (curr.getValue().equals(val)) {
+					
+					if (previous == null) {
+						buckets[i] = curr.getNext(); // if removing first item, set the next as first
+						
+					} else {
+						previous.setNext(curr.getNext()); // else set the previous' next to curr's next
+					}	
+				} else {							// if match wasn't found, set previous to current before moving on
+					previous = curr;
+				}	
+				curr = curr.getNext(); 				// move in SLL
+			}	
+		}
+	}
+	
 	
 	// --- Node code ---
 	
@@ -246,11 +256,6 @@ public class RelationClass<k,v> implements Relation {
 				result += this.getNext().printBucket();
 			return result;
 		}
-	}
-
-	
-
-	
-	
+	}	
 }
 
