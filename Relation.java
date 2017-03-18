@@ -1,9 +1,6 @@
 import java.util.Set;
 
 public interface Relation<Node, k, v> {
-	
-	// TODO reduce the overloading methods so they just pass a converted paramater
-	// as a parameter to the original (e.g. k key) method
 
 	// 1. test whether the relation contains a given pair (x, y)
 	// public boolean contains(Node node);
@@ -24,4 +21,6 @@ public interface Relation<Node, k, v> {
 	
 	//6. remove a given pair (x, y) from the relation
 	// remove (k key, v val)
+	
+	// 7. given x, remove all pairs (x, y) from the relation
 }
