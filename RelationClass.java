@@ -1,7 +1,9 @@
 import java.io.*;
 import java.util.*;
 
-/** Binary Relation ADT of homogenous types k, v implemented as a Hash Table. 
+/** Binary Relation ADT of homogenous types k, v implemented as a hash table. 
+ *  For ease of testing, populates the hash table based on a text file; therefore tests are 
+ *  performed on Strings.
  *
  * @author 1103086v
  *
@@ -13,12 +15,11 @@ public class RelationClass<k,v> implements Relation <k,v> {
 	private Node<k,v>[] buckets;
 	
 	/** Testing file containing country symbol and language pairs separated by new lines, 
-	 *  e.g. FR French
-	 */
+	 *  e.g. FR French */
 	private final String FILE_NAME = "myfile.txt";
 	
-	/** Arbitrary number for determining the number of buckets. Seeks to achieve a compromise
-	 *  of hash table occupancy and collission occurences. Based on a common hash table load factor of 0.5-0.75.*/
+	/** Number determining the number of buckets.
+	 *  Based on the recommendation that a hash table load factor should be 0.5-0.75.*/
 	private final double BUCKET_MULTIPLIER = 1.5;
 	
 	/** Hash Table constructor. Utilises Parser object to process input from testing file.
@@ -29,11 +30,11 @@ public class RelationClass<k,v> implements Relation <k,v> {
 	@SuppressWarnings("unchecked")
 	public RelationClass() {
 		
-		Parser pars = new Parser(FILE_NAME);
+		Parser pars = new Parser(FILE_NAME); 							
 		int bucketlength = 0;
 		bucketlength = (int) (pars.getNumOfLines()*BUCKET_MULTIPLIER);
 		buckets = (Node<k,v>[]) new Node<?,?>[bucketlength];
-		pars.process(this);
+		pars.process(this);												
 	}
 	
 	/** Hash function that returns a bucket index smaller than bucketlength */
@@ -44,41 +45,47 @@ public class RelationClass<k,v> implements Relation <k,v> {
 	/*
 	 * Hash table insertion algorithm. If a pair already exists on the hashed index,
 	 * appends it to the last element as in a SLL.
+	 * 
+	 * Complexity: best case O(1), worst case O(n) if one bucket contains all n items.
 	 */
 	public void insert (k key, v val) {
 		int b = hash(key);
 		Node<k,v> curr = buckets[b];
 		
 		while (curr != null) {	
-			if (key.equals(curr.getKey())) {
-
-				if (val.equals(curr.getValue())) {		// if both key and value already exist, terminate
-					System.err.println("Pair " + key + " " + val + " already exists");
-					return;
-				}
-				else if (curr.getNext() == null) {		// if reached last element, append the new node to the end
-						curr.setNext(key, val);
-						return;
-				}
+			if (key.equals(curr.getKey()) && val.equals(curr.getValue())) { 
+				
+				System.err.println("Pair " + key + " " + val + " already exists");
+				return;								// if both key and value already exist, terminate
 			}
-			else if  (curr.getNext() == null) {			// 
-						curr.setNext(key, val);
-						return; 
+			else if (curr.getNext() == null) {		// if reached last element, append the new node to the end
+				curr.setNext(key, val);
+				return; 
 			}
-			curr = curr.getNext();	// propagate on the SLL until both key and value matched or end of SLL is found
+			curr = curr.getNext();					// propagate on the SLL until key and value matched or end of SLL reached
 		}
-		buckets[b] = new Node<k,v>(key, val, null);		// if there are no nodes at the hashed index, place the new node there
+		buckets[b] = new Node<k,v>(key, val, null);	// if there are no nodes at the hashed index, place the new node there
 	}
 	
-	
+	/** Overloaded contains(key, value) method to support the use of Node<k,v> object as a parameter */
 	public boolean contains(Node node) {
 		k key = (k) node.getKey();
 		v value = (v) node.getValue();
+		return contains(key, value);
+	}
+	
+	/* 
+	 * Hash table search algorithm. Hashes the key to obtain bucket index, then propagates along the SLL at that index.
+	 * Returns true if pair was found, otherwise returns false.
+	 * 
+	 * Complexity: best case O(1), worst case O(n) if one bucket contains all n items.
+	 */
+	public boolean contains(k key, v value) {
 		int b = hash(key);
 		Node<k,v> curr = buckets[b];
 		
 		while (curr != null) {
-			if (key.equals(curr.getKey()))	// check if keys are the same
+			if (key.equals(curr.getKey()))
 				if (value.equals(curr.getValue()))
 					return true;
 			curr = curr.getNext();
@@ -86,14 +93,12 @@ public class RelationClass<k,v> implements Relation <k,v> {
 		return false;
 	}
 	
-	// overloaded contains() method so that simple string input can be tested
-	public boolean contains(k key, v value) {
-		Node n = new Node(key, value, null);
-		return contains(n);
-	}
-	
-	// 2. given x, return a set containing all values y such that the relation contains (x, y)
-	
+	/*
+	 * 	Hashes the key to obtain bucket index, then propagates along the SLL at that index.
+	 *  Adds every matching value of the SLL pairs to the return Set.
+	 *  
+	 *  Complexity: best case O(1), worst case O(n) if one bucket contains all n items.
+	 */
 	public Set<v> getValues(k key) {
 		int b = hash(key);
 		Node<k,v> curr = buckets[b];
@@ -107,12 +112,18 @@ public class RelationClass<k,v> implements Relation <k,v> {
 		return resultSet;
 	}
 		
-	// 3. given y, return a set containing all values x such that the relation contains (x, y)
+	/*
+	 *  For every occupied bucket in the hash table, propagates along the SLL at the bucket.
+	 *  Adds every matching key of the SLL pairs to the return Set.
+	 *  
+	 *  Complexity: O(n) because needs to look at every item.
+	 */
 	
 	public Set<v> getKeys(v value) {
 		Set<v> resultSet = new HashSet<v>();
 		for (int i = 0; i < buckets.length; i++) {
 			Node<k,v> curr = buckets[i];
+			
 			while (curr != null) {
 				if (curr.getValue().equals(value))
 					resultSet.add((v) curr.getKey());
@@ -122,12 +133,24 @@ public class RelationClass<k,v> implements Relation <k,v> {
 		return resultSet;
 	}
 	
+	/* Sets every bucket to null
+	 * 
+	 * Complexity: O(buckets.length)
+	 */
 	public void clear() {
 		for (int i = 0; i < buckets.length; i++) {
 			buckets[i] = null;
 		}
 	}
 	
+	/* 
+	 *  Hashes the key to obtain bucket index, then propagates along the SLL on that index.
+	 *  If the first node of the SLL is matching, sets the bucket index to the following node and returns.
+	 *  Otherwise continues along the SLL until the matching node is found, and sets the previous node's 'next'
+	 *  attribute to the following pair and returns. 
+	 *  
+	 *  Complexity: best case O(1), worst case O(n) if one bucket contains all n items and we are removing the last one.
+	 */
 	public void remove (k key, v val) {
 		
 		int b = hash(key);
@@ -143,12 +166,10 @@ public class RelationClass<k,v> implements Relation <k,v> {
 						buckets[b] = curr.getNext();
 						return;
 				}	
-				
 				else {						// if it's not the first one then make previous's next point to curr's next
 					previous.setNext(curr.getNext()); 
 					return;
-				}
-				
+				}		
 			} else {						// there is not match, keep going through the SLL
 				previous = curr;
 				curr = curr.getNext();
@@ -157,7 +178,14 @@ public class RelationClass<k,v> implements Relation <k,v> {
 		System.out.println("Pair not found");
 	}
 		
-	// 7. given x, remove all pairs (x, y) from the relation
+	/* 
+	 *  Hashes the key to obtain bucket index, then propagates along the SLL on that index.
+	 *  If the first node of the SLL is matching, sets the bucket index to the following node continues along the SLL.
+	 *  Otherwise continues along the SLL until the matching node is found, and sets the previous node's 'next'
+	 *  attribute to the following pair, then continues along the SLL.
+	 *  
+	 *  Complexity: best case O(1), worst case O(n) if one bucket contains all n items.
+	 */
 	public void removeAllWithKey(k key) {
 		
 		int b = hash(key);
@@ -168,12 +196,10 @@ public class RelationClass<k,v> implements Relation <k,v> {
 			if (key.equals(curr.getKey())) { // check if keys match
 			
 				if (previous == null) {
-					buckets[b] = curr.getNext(); // if removing first item, set the next as first
-					
+					buckets[b] = curr.getNext(); // if removing first item, set the next as first			
 				} else {
 					previous.setNext(curr.getNext()); // else set the previous' next to curr's next
-				}
-				
+				}		
 			} else {
 				previous = curr; // if match wasn't found, set previous to current before moving on
 			}
@@ -182,7 +208,14 @@ public class RelationClass<k,v> implements Relation <k,v> {
 	}	
 	
 	
-	// 8. given y, remove all pairs (x, y) from the relation
+	/* 
+	 * 	For every occupied bucket, propagates along the SLL at the bucket.
+	 *  If the first node of the SLL is matching, sets the bucket index to the following node continues along the SLL.
+	 *  Otherwise continues along the SLL until the matching node is found, and sets the previous node's 'next'
+	 *  attribute to the following pair, then continues along the SLL.
+	 *  
+	 *  Complexity: O(n)
+	 */
 	public void removeAllWithValue(v val) {
 		for (int i = 0; i < buckets.length; i++) {
 			Node<k,v> curr = buckets[i];
@@ -192,8 +225,7 @@ public class RelationClass<k,v> implements Relation <k,v> {
 				if (curr.getValue().equals(val)) {
 					
 					if (previous == null) {
-						buckets[i] = curr.getNext(); // if removing first item, set the next as first
-						
+						buckets[i] = curr.getNext(); // if removing first item, set the next as first		
 					} else {
 						previous.setNext(curr.getNext()); // else set the previous' next to curr's next
 					}	
@@ -208,7 +240,10 @@ public class RelationClass<k,v> implements Relation <k,v> {
 	/*
 	 * Returns a string representation of all occupied buckets in the format 
 	 * [occupied bucket index] <k, v> <k, v> <k,v> ...
-	 *  ... 
+	 *  ...
+	 *  For every occupied bucket, prints the SLL at that bucket.
+	 *  
+	 *  Complexity: O(n) including the printBucket() helper method, as every item needs to be printed.
 	 */
 	@Override
 	public String toString() {
@@ -223,6 +258,7 @@ public class RelationClass<k,v> implements Relation <k,v> {
 			return "Relation is empty";
 		return result;
 	}
+	
 	
 	// --- Node code ---
 	
@@ -256,7 +292,12 @@ public class RelationClass<k,v> implements Relation <k,v> {
 			return value;
 		}
 		
-		// Overloaded setNext method to enable the use and testing of different parameter types
+		/** Sets the 'next' attribute of a node to the node n specified in the parameter.*/
+		private void setNext(Node n) {
+			next = n;
+		}
+		
+		// Overloaded setNext method to enable the use and testing of other parameter types
 		/** Sets the next attribute of a node to a new node with the provided key and value. 
 		 * 
 		 * @param key
@@ -265,14 +306,6 @@ public class RelationClass<k,v> implements Relation <k,v> {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private void setNext(k key, v value) {
 			next = new Node (key, value, null);
-		}
-		
-		/** Sets the next attribute of a node to the node n specified in the parameter.
-		 * 
-		 * @param n
-		 */
-		private void setNext(Node n) {
-			next = n;
 		}
 		
 		/** Returns a string representation of a Node<k,v> in the format "<k,v>".*/

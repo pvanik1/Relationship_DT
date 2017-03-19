@@ -9,31 +9,31 @@ import java.util.Set;
  */
 public interface Relation <k, v> {
 
-	/** 1. test whether the relation contains a given pair (x, y)*/
+	/** 1. tests whether the relation contains a given pair (k, v)*/
 	public boolean contains(k key, v value);
 	
-	/** 2. given x, return a set containing all values y such that the relation contains (x,y) */ 
+	/** 2. given k, returns a set containing all values v such that the relation contains (k,v) */ 
 	public Set<v> getValues(k key); 
 	
-	/** 3. given y, return a set containing all values x such that the relation contains (x, y) */
+	/** 3. given v, returns a set containing all values k such that the relation contains (k, v) */
 	public Set<v> getKeys(v value);
 	
-	/** 4. make the relation empty */
+	/** 4. makes the relation empty */
 	public void clear();
 	
-	/** 5. add a given pair (x, y) to the relation */
+	/** 5. adds a given pair (k, v) to the relation */
 	public void insert (k key, v val);
 	
-	/** 6. remove a given pair (x, y) from the relation */
+	/** 6. removes a given pair (k, v) from the relation */
 	public void remove (k key, v val);
 	
-	/** 7. given x, remove all pairs (x, y) from the relation */
+	/** 7. given k, removes all pairs (k, v) from the relation */
 	public void removeAllWithKey(k key);
 	
-	/** 8. given y, remove all pairs (x, y) from the relation */
+	/** 8. given v, removes all pairs (k, v) from the relation */
 	public void removeAllWithValue(v val);
 	
-	/** 9. render the relation’s contents as a string, in a suitable format. */
+	/** 9. renders the relation’s contents as a string, in a suitable format. */
 	@Override
 	public String toString();
 }

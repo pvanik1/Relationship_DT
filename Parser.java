@@ -37,10 +37,6 @@ public class Parser {
 	 * Processing method is tailored to the input file and assumes that
 	 * keys and values are strings entered in the following format:
 	 * 		key <space> value <newline>
-	 * 
-	 * Other file types, such as integers, could be handled by 
-	 * checking whether the next string can be parsed as an integer (.parseToInt()) and
-	 * catching the exception. 
 	 */	
 	@SuppressWarnings("unchecked")
 	public void process(RelationClass relation) {
@@ -60,7 +56,6 @@ public class Parser {
 					key = inLine.next();
 					value = inLine.next();
 					relation.insert(key, value);
-					//System.err.println("Tried adding " + key + " " + value);
 				}
 				inLine.close();
 			}
