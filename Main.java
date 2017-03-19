@@ -8,12 +8,12 @@ public class Main {
 		
 		RelationClass rel = new RelationClass();
 		
-		System.err.println("The starting point for testing is myfile.txt."
+		System.out.println("The starting point for testing is myfile.txt."
 				+ "It currently contains the following entries:\n"
 				+ "BE French\n"
 				+ "FR French\n"
 				+ "IT Italian\n"
-				+ "BE Flemish\n\n");
+				+ "BE Flemish\n");
 		
 		/* 9. renders the relation’s contents as a string, in a suitable format. */
 		System.out.println("9. renders the relation’s contents as a string, in a suitable format");
@@ -70,7 +70,7 @@ public class Main {
 		System.out.println("Method: removeAllWithKey(key)");
 		System.out.println("Test: Removing all BE pairs.");
 		rel.removeAllWithKey("BE");
-		System.out.println(rel + "\n");
+		System.out.println(rel);
 		
 		
 		/* 8. given v, remove all pairs (k, v) from the relation */
@@ -78,12 +78,12 @@ public class Main {
 		System.out.println("Method: removeAllWithValue(value)");
 		System.out.println("Test: Removing all Russian pairs.");
 		rel.removeAllWithValue("Russian");
-		System.out.println(rel + "\n");
+		System.out.println(rel);
 		
 		/* 4. make the relation empty */
-		System.out.println("3. given v, return a set containing all values k such that the relation contains (k, v)");
+		System.out.println("4. makes the relation empty");
 		System.out.println("Method: clear()");
-		System.out.println("Test: Print returns 'Relation is empty'");
+		System.out.println("Test: Relation is cleared and print returns 'Relation is empty'");
 		rel.clear();
 		System.out.println(rel);
 	}

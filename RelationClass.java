@@ -67,12 +67,6 @@ public class RelationClass<k,v> implements Relation <k,v> {
 		buckets[b] = new Node<k,v>(key, val, null);	// if there are no nodes at the hashed index, place the new node there
 	}
 	
-	/** Overloaded contains(key, value) method to support the use of Node<k,v> object as a parameter */
-	public boolean contains(Node node) {
-		k key = (k) node.getKey();
-		v value = (v) node.getValue();
-		return contains(key, value);
-	}
 	
 	/* 
 	 * Hash table search algorithm. Hashes the key to obtain bucket index, then propagates along the SLL at that index.
@@ -92,6 +86,15 @@ public class RelationClass<k,v> implements Relation <k,v> {
 		}
 		return false;
 	}
+	
+	
+	/** Overloaded contains(key, value) method to support the use of Node<k,v> object as a parameter */
+	public boolean contains(Node node) {
+		k key = (k) node.getKey();
+		v value = (v) node.getValue();
+		return contains(key, value);
+	}
+	
 	
 	/*
 	 * 	Hashes the key to obtain bucket index, then propagates along the SLL at that index.
